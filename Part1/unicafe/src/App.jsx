@@ -11,20 +11,30 @@ const Button = ({ handleClick, text }) => {
 
 const Statistics = (props) => {
 
-  const { good, neutral, bad } = props.stat_combined
+  const { good, neutral, bad, clicked } = props.stat_combined
   const all = good + neutral + bad
   const average = ((good * 1) + (neutral * 0) + (bad * -1)) / all
   const positive = (good / all) * 100
+
+  if (clicked) {
+    return (
+
+
+      <>
+        <h1>Statistics</h1>
+        <p>good {good}</p>
+        <p>neutral {neutral}</p>
+        <p>bad {bad}</p>
+        <p>all {all}</p>
+        <p>average {isNaN(average) ? 0 : average}</p>
+        <p>positive {isNaN(positive) ? 0 : positive}%</p>
+      </>
+
+    )
+  }
+
   return (
-    <>
-      <h1>Statistics</h1>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
-      <p>average {isNaN(average) ? 0 : average}</p>
-      <p>positive {isNaN(positive) ? 0 : positive}%</p>
-    </>
+    <p>No feedback given</p>
   )
 }
 
@@ -36,16 +46,26 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
+  const [clicked, setClicked] = useState(false)
 
   return (
     <div>
       <h1>give feedback</h1>
-      <Button handleClick={() => setGood(good + 1)} text="good" />
-      <Button handleClick={() => setNeutral(neutral + 1)} text="neutral" />
-      <Button handleClick={() => setBad(bad + 1)} text="bad" />
+      <Button handleClick={() => {
+        setGood(good + 1)
+        setClicked(true)
+      }} text="good" />
+      <Button handleClick={() => {
+        setNeutral(neutral + 1)
+        setClicked(true)
+      }
+      } text="neutral" />
+      <Button handleClick={() => {
+        setBad(bad + 1)
+        setClicked(true)
+      }} text="bad" />
 
-
-      <Statistics stat_combined={{ good, neutral, bad }} />
+      <Statistics stat_combined={{ good, neutral, bad, clicked }} />
     </div>
   )
 }

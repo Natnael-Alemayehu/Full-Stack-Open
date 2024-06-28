@@ -2,11 +2,12 @@
 /* eslint-disable react/prop-types */
 const Header = ({ course }) => <h1>{course}</h1>
 
-const Total = ({ sum }) => <p>Number of exercises {sum}</p>
+const Total = ({ sum }) => <strong><p>Number of exercises {sum}</p></strong>
 
 const Part = ({ part }) => {
   return (
     <p>
+
       {part.name} {part.exercises}
     </p>
   )
@@ -26,10 +27,16 @@ const Content = ({ parts }) => {
 }
 
 const Course = (props) => {
+  const parts = props.course.parts
+  const list_exercise = parts.map((part) => part.exercises)
+
+  const add = (accumulator, a) => accumulator + a
+  const sum = list_exercise.reduce(add, 0)
   return (
     <>
       <Header course={props.course.name} />
-      <Content parts={props.course.parts} />
+      <Content parts={parts} />
+      <Total sum={sum} />
     </>
   )
 }
@@ -55,8 +62,8 @@ const App = () => {
         id: 3
       },
       {
-        name: 'Machine Learning',
-        exercises: 15,
+        name: 'Redux',
+        exercises: 11,
         id: 4
       },
     ]

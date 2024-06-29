@@ -1,5 +1,49 @@
 import { useState } from 'react'
 
+const Display = (props) => {
+  return (
+    <div>{props.name} {props.number}</div>
+  )
+}
+const Filter = (props) => {
+  return (
+    <div>Filter shown with:
+      <input onChange={props.manageField} />
+    </div>
+  )
+}
+
+const PersonForm = (props) => {
+  return (
+    <form onSubmit={props.submit}>
+      <div>
+        <div>
+          Name: <input onChange={props.changeName} />
+        </div>
+        <div>
+          Number: <input onChange={props.changeNumber} />
+        </div>
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const Persons = ({ personFilterObject }) => {
+  return (
+    <>
+
+      {personFilterObject.map((person) => {
+        return (
+          <Display name={person.name} number={person.number} key={person.id} />
+        )
+      })}
+    </>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -24,8 +68,7 @@ const App = () => {
     setFilter(event.target.value)
   }
 
-
-  const fil_persons = persons.filter((person) => {
+  const filtered_persons_object = persons.filter((person) => {
     return (
       person.name.includes(newFilter)
     )
@@ -50,40 +93,25 @@ const App = () => {
     }
   }
 
-  const DisplayNames = (props) => {
-    return (
-      <div>{props.name} {props.number}</div>
-    )
-  }
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        Filter shown with: <input onChange={handleChangeFilter} />
-      </div>
+
+      <Filter manageField={handleChangeFilter} />
+
       <h2>Add New</h2>
 
-      <form onSubmit={handleOnSubmit}>
-        <div>
-          <div>
-            Name: <input onChange={handleChangeName} />
-          </div>
-          <div>
-            Number: <input onChange={handleChangeNumber} />
-          </div>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm submit={handleOnSubmit}
+        changeName={handleChangeName}
+        changeNumber={handleChangeNumber}
+      />
+
+
       <h2>Numbers</h2>
 
-      {fil_persons.map((person) => {
-        return (
-          <DisplayNames name={person.name} number={person.number} key={person.id} />
-        )
-      })}
+      <Persons personFilterObject={filtered_persons_object} />
 
     </div>
   )

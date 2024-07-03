@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/person'
 
 const Display = (props) => {
   return (
@@ -83,25 +83,21 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-      // setPersons(persons.concat(personObj))
-      axios
-        .post('http://localhost:3001/persons', personObj)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          setNewName("")
-          setNewNumber("")
+      personService
+        .addPerson(personObj)
+        .then(newpersonObject => {
+          setPersons(persons.concat(newpersonObject))
         })
-      // setNewName("")
-      // setNewNumber("")
     }
   }
 
   const persons_hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getPerson()
+      .then(person => {
+        setPersons(person)
       })
+
   }
 
   useEffect(persons_hook, [])

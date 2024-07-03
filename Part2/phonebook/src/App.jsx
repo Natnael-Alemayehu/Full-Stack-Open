@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
@@ -75,7 +76,6 @@ const App = () => {
     const personObj = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
     }
     const nameExists = persons.some(person => person.name === newName)
 
@@ -83,14 +83,20 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-      setPersons(persons.concat(personObj))
-      setNewName("")
-      setNewNumber("")
+      // setPersons(persons.concat(personObj))
+      axios
+        .post('http://localhost:3001/persons', personObj)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName("")
+          setNewNumber("")
+        })
+      // setNewName("")
+      // setNewNumber("")
     }
   }
 
   const persons_hook = () => {
-    console.log('Effect')
     axios
       .get('http://localhost:3001/persons')
       .then(response => {

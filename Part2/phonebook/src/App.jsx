@@ -2,9 +2,18 @@
 import { useState, useEffect } from 'react'
 import personService from './services/person'
 
+const Delete = (props) => {
+  return (
+    <button onClick={props.onDelete}>Delete</button>
+  )
+}
+
 const Display = (props) => {
   return (
-    <div>{props.name} {props.number}</div>
+    <div>
+      {props.name} {props.number}
+      <Delete id={props.id} onDelete={props.onDelete} />
+    </div>
   )
 }
 const Filter = (props) => {
@@ -33,13 +42,13 @@ const PersonForm = (props) => {
   )
 }
 
-const Persons = ({ personFilterObject }) => {
+const Persons = ({ personFilterObject, onDelete }) => {
   return (
     <>
 
       {personFilterObject.map((person) => {
         return (
-          <Display name={person.name} number={person.number} key={person.id} />
+          <Display name={person.name} number={person.number} key={person.id} onDelete={() => onDelete(person.id, person.name)} />
         )
       })}
     </>
@@ -71,6 +80,22 @@ const App = () => {
     )
   })
 
+  const deletePerson = (id, name) => {
+    const question = window.confirm(`Delete ${name}`)
+
+    if (question) {
+      personService
+        .deletePerson(id)
+        .then(
+          setPersons(persons.filter(p => p.id !== id))
+        )
+
+    } else {
+      console.log("No clicked");
+    }
+
+  }
+
   const handleOnSubmit = (event) => {
     event.preventDefault()
     const personObj = {
@@ -97,7 +122,6 @@ const App = () => {
       .then(person => {
         setPersons(person)
       })
-
   }
 
   useEffect(persons_hook, [])
@@ -115,10 +139,9 @@ const App = () => {
         changeNumber={handleChangeNumber}
       />
 
-
       <h2>Numbers</h2>
 
-      <Persons personFilterObject={filtered_persons_object} />
+      <Persons personFilterObject={filtered_persons_object} onDelete={deletePerson} />
 
     </div>
   )

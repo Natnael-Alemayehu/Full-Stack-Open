@@ -1,35 +1,121 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import axios from "axios"
+import { useState, useEffect } from "react"
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const InputField = ({ onChange }) => {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <input onChange={onChange} type="text" />
     </>
   )
 }
 
-export default App
+const Detail = ({ country, id }) => {
+  const languages = country.languages
+  const langs = (languages) => {
+    const items = []
+    for (const lang in languages) {
+      const item = languages[lang]
+      items.push(
+        <li>{item}</li>
+      )
+    }
+    return items
+  }
+  return (
+    <div>
+      <h1>{country.name.common}</h1>
+      <div>
+        <div>capital {country.capital}</div>
+        <div>area {country.area}</div>
+      </div>
+      <h2>languages</h2>
+      <ul>
+        {langs(languages)}
+      </ul>
+
+      <div >
+        <img src={country.flags.png} alt="flag image" />
+      </div>
+
+    </div>
+
+  )
+}
+
+const DisplayCountries = ({ filtered_countries }) => {
+  console.log("filtered: ", filtered_countries)
+
+  if (filtered_countries.length > 10) {
+    return (
+      <div>
+        <p>Too many matches, specify another filter</p>
+      </div>
+    )
+  }
+  else if (10 > filtered_countries.length && filtered_countries.length > 1) {
+    if (!filtered_countries) return null
+    return (
+      <div>
+        {filtered_countries.map(country => {
+          const id = country.latlng.join('') || Date.now().toString()
+          return (
+            <div key={id}>{country.name.common}</div>
+          )
+        },)}
+      </div>
+    )
+  }
+  else if (filtered_countries.length === 1) {
+    if (!filtered_countries) return null
+    return (
+      <div>
+        {filtered_countries.map(country => {
+          const id = country.latlng.join('') || Date.now().toString()
+          return (
+            <Detail country={country} key={id} id={id} />
+          )
+        })
+        }
+      </div >
+    )
+  }
+}
+
+const App = () => {
+  const [text, setText] = useState(null)
+  const [countries, setCountries] = useState([])
+
+  const ALL_URL = "https://studies.cs.helsinki.fi/restcountries/api/all"
+  const NAME_URL = "https://studies.cs.helsinki.fi/restcountries/api/name"
+
+  const handleChange = (event) => {
+    setText(event.target.value)
+  }
+
+
+  useEffect(() => {
+    console.log("Started...")
+    axios
+      .get(ALL_URL)
+      .then(response => {
+        const countriesList = response.data
+        setCountries(countriesList)
+        console.log("Finished.")
+      })
+  }, [])
+
+
+  const filtered_countries = countries.filter(country => {
+    return (
+      country.name.common.toLowerCase().includes(text)
+    )
+  })
+  return (
+    <div>
+      Find countries <InputField onChange={handleChange} />
+      <DisplayCountries filtered_countries={filtered_countries} />
+    </div>
+  )
+}
+
+export default App  

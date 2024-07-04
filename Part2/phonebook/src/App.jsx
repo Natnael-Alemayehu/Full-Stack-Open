@@ -96,6 +96,14 @@ const App = () => {
 
   }
 
+  const updatePerson = (id, personObj) => {
+    personService
+      .updatePerson(id, personObj)
+      .then(updatedPerson =>
+        setPersons(persons.map(p => p.id !== id ? p : updatedPerson))
+      )
+  }
+
   const handleOnSubmit = (event) => {
     event.preventDefault()
     const personObj = {
@@ -105,7 +113,11 @@ const App = () => {
     const nameExists = persons.some(person => person.name === newName)
 
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`)
+      const update_question = window.confirm(`${newName} is already added to phonebook do you want to update the number?`)
+      if (update_question) {
+        const id = persons.find(p => p.name === newName).id
+        updatePerson(id, personObj)
+      }
     }
     else {
       personService
@@ -125,7 +137,7 @@ const App = () => {
   }
 
   useEffect(persons_hook, [])
-
+  console.log("Persons", persons);
   return (
     <div>
       <h2>Phonebook</h2>

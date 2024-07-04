@@ -2,6 +2,17 @@
 import { useState, useEffect } from 'react'
 import personService from './services/person'
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+  return (
+    <div className={`notification ${type}`}>
+      {message}
+    </div>
+  )
+}
+
 const Delete = (props) => {
   return (
     <button onClick={props.onDelete}>Delete</button>
@@ -60,6 +71,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setFilter] = useState('')
+  const [notifications, setNotifications] = useState({ message: '', type: '' })
 
   const handleChangeName = (event) => {
     // console.log(event.target.value)
@@ -90,18 +102,26 @@ const App = () => {
           setPersons(persons.filter(p => p.id !== id))
         )
 
-    } else {
-      console.log("No clicked");
     }
-
   }
 
   const updatePerson = (id, personObj) => {
+    const message_object = {
+      message: `${personObj.name} has already been deleted`,
+      type: "failure"
+    }
     personService
       .updatePerson(id, personObj)
       .then(updatedPerson =>
         setPersons(persons.map(p => p.id !== id ? p : updatedPerson))
+      ).catch(error => {
+        setNotifications(Object.assign({}, message_object))
+        setTimeout(() => {
+          setNotifications({ message: '', type: '' })
+        }, 3000);
+      }
       )
+
   }
 
   const handleOnSubmit = (event) => {
@@ -111,7 +131,6 @@ const App = () => {
       number: newNumber,
     }
     const nameExists = persons.some(person => person.name === newName)
-
     if (nameExists) {
       const update_question = window.confirm(`${newName} is already added to phonebook do you want to update the number?`)
       if (update_question) {
@@ -124,6 +143,15 @@ const App = () => {
         .addPerson(personObj)
         .then(newpersonObject => {
           setPersons(persons.concat(newpersonObject))
+          const message_object = {
+            message: `${personObj.name} has successfully been created`,
+            type: "success"
+          }
+          setNotifications(Object.assign({}, message_object))
+          setTimeout(() => {
+            const def = { message: '', type: '' }
+            setNotifications(Object.assign({}, def))
+          }, 2000);
         })
     }
   }
@@ -137,10 +165,10 @@ const App = () => {
   }
 
   useEffect(persons_hook, [])
-  console.log("Persons", persons);
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notifications.message} type={notifications.type} />
 
       <Filter manageField={handleChangeFilter} />
 

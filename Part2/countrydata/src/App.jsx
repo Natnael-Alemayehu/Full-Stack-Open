@@ -9,14 +9,14 @@ const InputField = ({ onChange }) => {
   )
 }
 
-const Detail = ({ country, id }) => {
+const Detail = ({ country }) => {
   const languages = country.languages
   const langs = (languages) => {
     const items = []
     for (const lang in languages) {
       const item = languages[lang]
       items.push(
-        <li>{item}</li>
+        <li key={lang}>{item}</li>
       )
     }
     return items
@@ -42,6 +42,24 @@ const Detail = ({ country, id }) => {
   )
 }
 
+const ShowButton = ({ country }) => {
+  const [showDetail, setShowDetail] = useState(false)
+  const btn_style = {
+    marginLeft: 10
+  }
+
+  const toggleDetail = () => {
+    setShowDetail(!showDetail)
+  }
+
+  return (
+    <>
+      <button style={btn_style} onClick={toggleDetail}>{showDetail ? "Hide" : "Show"}</button>
+      {showDetail && <Detail country={country} />}
+    </>
+  )
+}
+
 const DisplayCountries = ({ filtered_countries }) => {
   console.log("filtered: ", filtered_countries)
 
@@ -59,7 +77,9 @@ const DisplayCountries = ({ filtered_countries }) => {
         {filtered_countries.map(country => {
           const id = country.latlng.join('') || Date.now().toString()
           return (
-            <div key={id}>{country.name.common}</div>
+            <div key={id}>{country.name.common}
+              <ShowButton country={country} />
+            </div>
           )
         },)}
       </div>

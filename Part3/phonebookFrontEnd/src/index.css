@@ -1,0 +1,24 @@
+/* .notification {
+    background-color: lightgray;
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    margin: 1rem;
+} */
+
+.notification.success {
+    background-color: lightgray;
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    margin: 1rem;
+    border: 0.3rem solid green;
+    color: green;
+}
+
+.notification.failure {
+    background-color: lightgray;
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    margin: 1rem;
+    border: 0.3rem solid red;
+    color: red;
+}

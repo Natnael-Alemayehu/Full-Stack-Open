@@ -7,4 +7,4 @@ const blogSchema = new mongoose.Schema({
     likes: Number
 })
 
-modules.export = mongoose.model('Blog', blogSchema)
+module.exports = mongoose.model('Blog', blogSchema)

@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const logger = require('./utils/logger')
-const blog = require('./models/blogs')
+const blog = require('./models/blog')
 const mongoose = require('mongoose')
 const blogRouter = require('./controllers/blog')
 
